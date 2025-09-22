@@ -7,7 +7,7 @@ from scapy.sendrecv import sr1
 from app.logger import logger
 
 
-def fin_rst_scan(ip: str, ports: tuple[int]):
+def fin_rst_scan(ip: str, ports: list[int]):
     """
     Выполняет FIN-сканирование по одному порту за раз.
     Возвращает словарь: {ip: {port: status_or_service}}.

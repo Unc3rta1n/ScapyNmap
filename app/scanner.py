@@ -1,14 +1,16 @@
 import ipaddress
 
+from app.config import TimeoutEnum
+
 
 class Scanner:
     def __init__(self, args):
         self.ports = self._parse_ports(args.p)
-        self.host = self._validate_host(args.h)
-        self.hostpool = self._validate_hostpool(args.hp)
-        self.syn_scan = args.syn
-        self.fin_scan = args.fin
-        self.timing = args.T
+        self.hostpool = self._validate_hostpool(args.h)
+        self.syn = args.syn
+        self.fin = args.fin
+        self.timing = TimeoutEnum[f"T{args.T}"] if args.T is not None else TimeoutEnum.T3
+        self.delay, self.timeout, self.retry = self.timing.value
 
     def _parse_ports(self, ports: str) -> list[int]:
         """Парсинг портов из строки в список
@@ -49,7 +51,7 @@ class Scanner:
         except ipaddress.AddressValueError:
             return False
 
-    def _validate_hostpool(self, hostpool: str) -> list[str] | None:
+    def _validate_hostpool(self, hostpool: str) -> list[str]:
         """Парсинг и валидация пула айпи адресов
 
         Args:
@@ -62,7 +64,7 @@ class Scanner:
             list[str]: Список айпи адресов, которые будут сканироваться
         """
         if not hostpool:
-            return None
+            raise ValueError("Use --h flag to set host addresses to scan")
         try:
             if "-" in hostpool:
                 start_ip, end_ip = hostpool.split("-")
@@ -94,6 +96,6 @@ class Scanner:
 
     def __str__(self) -> str:
         return (
-            f"Scanner(ports={self.ports}, host={self.host}, "
-            f"hostpool={self.hostpool}, syn_scan={self.syn_scan}, timing={self.timing})"
+            f"Scanner(ports={self.ports}, host={self.hostpool}, "
+            f"hostpool={self.hostpool}, syn_scan={self.syn}, timing={self.timing})"
         )

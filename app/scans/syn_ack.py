@@ -26,12 +26,13 @@ def syn_ack_scan(ip: str, ports: tuple[int]) -> dict:
                 logger.debug(f"Port {port} is filtered or no response")
                 continue
 
-
             if answer.haslayer(TCP):
                 if answer[TCP].flags == "SA":  # SYN/ACK (порт открыт)
                     ip_src = str(answer[IP].src)
                     port_src = str(answer[TCP].sport)
                     sport = answer[TCP].sport
+                    if ip_src not in result:
+                        result[ip_src] = {}
                     try:
                         result[ip_src][port_src] = TCP_SERVICES[sport]
                     except KeyError:
