@@ -1,0 +1,3 @@
+[submodule "cve-2025-47812"]
+	path = cve-2025-47812
+	url = https://github.com/4m3rr0r/CVE-2025-47812-poc.git
