@@ -1,4 +1,5 @@
 import ipaddress
+import socket
 
 from app.config import TimeoutEnum
 
@@ -9,8 +10,15 @@ class Scanner:
         self.hostpool = self._validate_hostpool(args.h)
         self.syn = args.syn
         self.fin = args.fin
+        self.vuln = args.vuln
         self.timing = TimeoutEnum[f"T{args.T}"] if args.T is not None else TimeoutEnum.T3
         self.delay, self.timeout, self.retry = self.timing.value
+
+    def __str__(self) -> str:
+        return (
+            f"Scanner(ports={self.ports}, host={self.hostpool}, "
+            f"hostpool={self.hostpool}, syn_scan={self.syn}, timing={self.timing})"
+        )
 
     def _parse_ports(self, ports: str) -> list[int]:
         """Парсинг портов из строки в список
@@ -94,8 +102,28 @@ class Scanner:
     def run(self):
         raise NotImplementedError("The method is not implemented in the base class")
 
-    def __str__(self) -> str:
-        return (
-            f"Scanner(ports={self.ports}, host={self.hostpool}, "
-            f"hostpool={self.hostpool}, syn_scan={self.syn}, timing={self.timing})"
-        )
+    def _grab_ftp_banner(self, ip, port=21):
+        """Получить FTP баннер"""
+        try:
+            s = socket.socket()
+            s.settimeout(3)
+            s.connect((ip, port))
+            banner = s.recv(1024).decode(errors="ignore")
+            s.close()
+            return banner.strip()
+        except Exception:
+            return None
+
+    def _grab_http_header(self, ip, port=80):
+        """Получить HTTP-заголовки"""
+        try:
+            s = socket.socket()
+            s.settimeout(3)
+            s.connect((ip, port))
+            req = f"GET / HTTP/1.0\r\nHost: {ip}\r\n\r\n"
+            s.send(req.encode())
+            resp = s.recv(2048).decode(errors="ignore")
+            s.close()
+            return resp
+        except Exception:
+            return None
