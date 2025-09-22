@@ -7,9 +7,9 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}", // Устанавливает рабочую директорию как корень проекта
+            "cwd": "${workspaceFolder}",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}" // Добавляет корень в PYTHONPATH
+                "PYTHONPATH": "${workspaceFolder}"
             }
         }
     ]
