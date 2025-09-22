@@ -30,12 +30,12 @@ class ScapyNmap(Scanner):
                     response = sr1(request_fin, timeout=self.timeout, retry=self.retry, verbose=False, multi=False)
 
                     if response is None:
-                        self.logger.debug(f"Port {port} is open or filtered")
+                        self.logger.debug(f"Port {port} is open or filtered in {ip}")
                         result[ip][str(port)] = "open|filtered"
 
                     elif response.haslayer(TCP):
                         if response[TCP].flags == "RA":  # RST/ACK (порт закрыт)
-                            self.logger.debug(f"Port {port} is closed")
+                            self.logger.debug(f"Port {port} is closed  in {ip}")
                             # result[ip][str(port)] = "closed"
                         else:
                             # Порт открыт (неожиданные флаги для FIN, но добавляем в результат)
@@ -88,7 +88,7 @@ class ScapyNmap(Scanner):
                                 result[ip_src][port_src] = TCP_SERVICES[sport]
                             except KeyError:
                                 result[ip_src][port_src] = "Undefined"
-                            self.logger.debug(f"Port {port} is open ({result[ip_src][port_src]})  in {ip}")
+                            self.logger.debug(f"Port {port} is open ({result[ip_src][port_src]}) in {ip}")
                         elif response[TCP].flags == "RA":  # RST/ACK (порт закрыт)
                             self.logger.debug(f"Port {port} is closed in {ip}")
                         else:
@@ -129,7 +129,7 @@ class ScapyNmap(Scanner):
             # print(self.result)
             if self.vuln:
                 self.check_wing_server()
-                print(self.vulnerable)
+                # print(self.vulnerable)
             self.scan_finish_time = int(datetime.now(tz=timezone.utc).timestamp())
         except Exception as ex:
             self.logger.error(f"{str(ex)}", exc_info=True)
