@@ -15,8 +15,19 @@ class Scanner:
         self.delay, self.timeout, self.retry = self.timing.value
 
     def __str__(self) -> str:
+        if len(self.ports) > 10:  # Threshold to avoid long lists
+            min_port = min(self.ports)
+            max_port = max(self.ports)
+            # Check if ports form a contiguous range
+            if sorted(self.ports) == list(range(min_port, max_port + 1)):
+                ports_str = f"{min_port}-{max_port}"
+            else:
+                ports_str = f"{len(self.ports)} ports"
+        else:
+            ports_str = str(self.ports)
+
         return (
-            f"Scanner(ports={self.ports}, host={self.hostpool}, "
+            f"Scanner(ports={ports_str}, host={self.hostpool}, "
             f"hostpool={self.hostpool}, syn_scan={self.syn}, timing={self.timing})"
         )
 

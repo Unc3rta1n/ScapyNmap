@@ -3,12 +3,10 @@ name = "scapy-nmap"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
-    "pydantic>=2.11.9",
     "requests>=2.32.5",
     "scapy>=2.6.1",
-    "typer>=0.19.1",
     "whatportis>=0.8",
-    "tinydb==3.2.2"
+    "tinydb==3.2.2",
 ]
